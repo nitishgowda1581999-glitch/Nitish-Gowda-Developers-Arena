@@ -1,0 +1,138 @@
+import pandas as pd
+# Load the dataset
+df = pd.read_csv('
+/content/supermarket_sales.csv')
+# Display the first 5 rows of the DataFrame
+print("First 5 rows of the dataset:")
+print(df.head())
+# Display information about the DataFrame, including data types and non-null values
+print("\nDataFrame Information:")
+df.info()
+
+
+
+
+Spending by Payment Method
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+print("\n--- Total Spending by Payment Method ---")
+spending_by_payment = df.groupby('Payment')['Total'].sum().sort_values(ascending=False)
+print(spending_by_payment)
+plt.figure(figsize=(8, 5))
+sns.barplot(x=spending_by_payment.index, y=spending_by_payment.values, hue=spending_by_payment.index, palette='magma', legend=False)
+plt.title('Total Spending by Payment Method')
+plt.xlabel('Payment Method')
+plt.ylabel('Total Spending')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+print("\n--- Payment Method Distribution ---")
+payment_counts = df['Payment'].value_counts()
+print(payment_counts)
+plt.figure(figsize=(8, 5))
+sns.barplot(x=payment_counts.index, y=payment_counts.values, hue=payment_counts.index, palette='viridis', legend=False)
+plt.title('Distribution of Payment Methods')
+plt.xlabel('Payment Method')
+plt.ylabel('Count')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+
+Total Sales by Month
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sales_by_month = df.groupby('Month')['Total'].sum()
+plt.figure(figsize=(10, 6))
+sns.barplot(x=sales_by_month.index, y=sales_by_month.values, hue=sales_by_month.index, palette='viridis', legend=False)
+plt.title('Total Sales by Month')
+plt.xlabel('Month')
+plt.ylabel('Total Sales')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+
+Data Cleaning and Preprocessing
+
+Subtask:
+Convert 'Date' and 'Time' columns to datetime objects, and extract relevant features like day, month, and hour.
+Reasoning: To fulfill the subtask, I will convert the 'Date' and 'Time' columns to appropriate datetime formats, combine them into a single
+'DateTime' column, and then extract 'Hour', 'Month', and 'Day of Week' features.
+df['Date'] = pd.to_datetime(df['Date'])
+df['Time'] = pd.to_datetime(df['Time']).dt.time
+# Combine 'Date' and 'Time' into a new 'DateTime' column
+df['DateTime'] = df['Date'].astype(str) + ' ' + df['Time'].astype(str)
+df['DateTime'] = pd.to_datetime(df['DateTime'])
+# Extract relevant features
+df['Hour'] = df['DateTime'].dt.hour
+df['Month'] = df['DateTime'].dt.month
+df['Day of Week'] = df['DateTime'].dt.day_name()
+print("First 5 rows with new DateTime and extracted features:")
+print(df[['Date', 'Time', 'DateTime', 'Hour', 'Month', 'Day of Week']].head())
+print("\nUpdated DataFrame Info:")
+df.info()
+
+Exploratory Data Analysis (EDA)
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+categorical_cols = ['Branch', 'City', 'Product_Line', 'Customer_Type', 'Gender', 'Payment']
+print("\n--- Categorical Variables Distribution ---")
+for col in categorical_cols:
+print(f"\nDistribution of {col}:")
+print(df[col].value_counts())
+print("\n" + "="*50 + "\n")
+# Plotting categorical variables
+plt.figure(figsize=(18, 12))
+for i, col in enumerate(categorical_cols):
+plt.subplot(2, 3, i + 1) # Arrange plots in a 2x3 grid
+sns.countplot(data=df, x=col, palette='viridis')
+plt.title(f'Distribution of {col}')
+plt.xlabel(col)
+plt.ylabel('Count')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+
+
+
+Sales Analysis
+Subtask:
+Calculate total sales by branch, product line, customer type, and gender. Analyze sales trends over time.
+Reasoning: To calculate total sales by 'Branch', 'Product_Line', 'Customer_Type', and 'Gender', I will group the DataFrame by each of these
+columns and sum the 'Total' column, then print the results for each.
+print("\n--- Sales by Branch ---")
+sales_by_branch = df.groupby('Branch')['Total'].sum().sort_values(ascending=False)
+print(sales_by_branch)
+print("\n--- Sales by Product Line ---")
+sales_by_product_line = df.groupby('Product_Line')['Total'].sum().sort_values(ascending=False)
+print(sales_by_product_line)
+print("\n--- Sales by Customer Type ---")
+sales_by_customer_type = df.groupby('Customer_Type')['Total'].sum().sort_values(ascending=False)
+print(sales_by_customer_type)
+print("\n--- Sales by Gender ---")
+sales_by_gender = df.groupby('Gender')['Total'].sum().sort_values(ascending=False)
+print(sales_by_gender)
+
+
+Customer Behavior Analysis
+
+print("\n--- Average Rating by Customer Type and Gender ---")
+average_rating = df.groupby(['Customer_Type', 'Gender'])['Rating'].mean().unstack()
+print(average_rating)
+print("\n--- Purchase Frequency by Customer Type and Gender ---")
+purchase_frequency = df.groupby(['Customer_Type', 'Gender'])['Invoice_ID'].count().unstack()
+print(purchase_frequency)
+print("\n--- Total Spending by Customer Type and Gender ---")
+total_spending = df.groupby(['Customer_Type', 'Gender'])['Total'].sum().unstack()
+print(total_spending)
+plt.show()
