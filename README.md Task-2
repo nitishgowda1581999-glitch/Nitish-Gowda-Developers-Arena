@@ -136,3 +136,142 @@ print("\n--- Total Spending by Customer Type and Gender ---")
 total_spending = df.groupby(['Customer_Type', 'Gender'])['Total'].sum().unstack()
 print(total_spending)
 plt.show()
+
+Project 2 - Student Performance Analysis
+
+import pandas as pd
+
+df = pd.read_csv('/content/student-por.csv')
+display(df.head())
+
+
+
+df['pass_fail'] = df['G3'].apply(lambda x: 'Pass' if x >= 10 else 'Fail')
+
+pass_percentage = (df['pass_fail'].value_counts(normalize=True).get('Pass', 0)) * 100
+fail_percentage = (df['pass_fail'].value_counts(normalize=True).get('Fail', 0)) * 100
+
+print(f"Pass Percentage: {pass_percentage:.2f}%")
+print(f"Fail Percentage: {fail_percentage:.2f}%")
+
+
+mean_g3 = df['G3'].mean()
+median_g3 = df['G3'].median()
+std_dev_g3 = df['G3'].std()
+
+print(f"Mean Final Grade (G3): {mean_g3:.2f}")
+print(f"Median Final Grade (G3): {median_g3:.2f}")
+print(f"Standard Deviation of Final Grade (G3): {std_dev_g3:.2f}")
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='absences', y='G3', data=df)
+plt.title('Student Absences vs. Final Grade (G3)')
+plt.xlabel('Number of Absences')
+plt.ylabel('Final Grade (G3)')
+plt.grid(True, alpha=0.75)
+plt.show()
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+demographic_columns = ['age', 'sex', 'address', 'famsize', 'Pstatus', 'Medu', 'Fedu', 'Mjob', 'Fjob', 'reason', 'guardian']
+
+# Analyze 'age'
+print("\n--- Analysis of Age for Failing Students ---")
+print(failing_students_df['age'].value_counts().sort_index())
+
+plt.figure(figsize=(8, 5))
+sns.histplot(failing_students_df['age'], bins=range(failing_students_df['age'].min(), failing_students_df['age'].max() + 2), kde=False, color='skyblue')
+plt.title('Distribution of Age Among Failing Students')
+plt.xlabel('Age')
+plt.ylabel('Number of Failing Students')
+plt.xticks(range(failing_students_df['age'].min(), failing_students_df['age'].max() + 1))
+plt.grid(axis='y', alpha=0.75)
+plt.show()
+
+
+for col in demographic_columns[1:]:
+    print(f"\n--- Analysis of {col} for Failing Students ---")
+    print(failing_students_df[col].value_counts())
+
+    plt.figure(figsize=(8, 5))
+    sns.countplot(x=col, data=failing_students_df, hue=col, palette='viridis', order=failing_students_df[col].value_counts().index, legend=False)
+    plt.title(f'Distribution of {col} Among Failing Students')
+    plt.xlabel(col.replace('_', ' ').title())
+    plt.ylabel('Number of Failing Students')
+    plt.grid(axis='y', alpha=0.75)
+    plt.show()
+
+
+
+academic_columns = ['G1', 'G2', 'studytime', 'failures']
+social_columns = ['absences', 'romantic', 'goout', 'Dalc', 'Walc']
+
+# Analyze Academic Factors
+print("\n--- Analysis of Academic Factors for Failing Students ---")
+
+for col in academic_columns:
+    print(f"\n--- Analysis of {col} ---")
+    if failing_students_df[col].dtype in ['int64', 'float64']:
+        # Numerical column
+        mean_val = failing_students_df[col].mean()
+        median_val = failing_students_df[col].median()
+        std_val = failing_students_df[col].std()
+        print(f"Mean {col}: {mean_val:.2f}")
+        print(f"Median {col}: {median_val:.2f}")
+        print(f"Standard Deviation {col}: {std_val:.2f}")
+
+        plt.figure(figsize=(8, 5))
+        sns.histplot(failing_students_df[col], bins=len(failing_students_df[col].unique()), kde=True, color='lightcoral')
+        plt.title(f'Distribution of {col} Among Failing Students')
+        plt.xlabel(col.replace('_', ' ').title())
+        plt.ylabel('Number of Failing Students')
+        plt.grid(axis='y', alpha=0.75)
+        plt.show()
+    else:
+        # Categorical column
+        print(failing_students_df[col].value_counts())
+        plt.figure(figsize=(8, 5))
+        sns.countplot(x=col, data=failing_students_df, hue=col, palette='pastel', order=failing_students_df[col].value_counts().index, legend=False)
+        plt.title(f'Distribution of {col} Among Failing Students')
+        plt.xlabel(col.replace('_', ' ').title())
+        plt.ylabel('Number of Failing Students')
+        plt.grid(axis='y', alpha=0.75)
+        plt.show()
+
+
+
+print(
+"\n--- Analysis of Social Factors for Failing Students ---"
+)
+for col in social_columns:
+    print(f"\n--- Analysis of {col} ---")
+    if failing_students_df[col].dtype in ['int64', 'float64']:
+        # Numerical column
+        mean_val = failing_students_df[col].mean()
+        median_val = failing_students_df[col].median()
+        std_val = failing_students_df[col].std()
+        print(f"Mean {col}: {mean_val:.2f}")
+        print(f"Median {col}: {median_val:.2f}")
+        print(f"Standard Deviation {col}: {std_val:.2f}")
+
+        plt.figure(figsize=(8, 5))
+        sns.histplot(failing_students_df[col], bins=len(failing_students_df[col].unique()), kde=True, color='lightgreen')
+        plt.title(f'Distribution of {col} Among Failing Students')
+        plt.xlabel(col.replace('_', ' ').title())
+        plt.ylabel('Number of Failing Students')
+        plt.grid(axis='y', alpha=0.75)
+        plt.show()
+    else:
+        # Categorical column
+        print(failing_students_df[col].value_counts())
+        plt.figure(figsize=(8, 5))
+        sns.countplot(x=col, data=failing_students_df, hue=col, palette='pastel', order=failing_students_df[col].value_counts().index, legend=False)
+        plt.title(f'Distribution of {col} Among Failing Students')
+        plt.xlabel(col.replace('_', ' ').title())
+        plt.ylabel('Number of Failing Students')
+        plt.grid(axis='y', alpha=0.75)
+        plt.show()
